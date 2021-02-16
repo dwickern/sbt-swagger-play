@@ -7,6 +7,8 @@ lazy val play28 = ConfigAxis("play28", "play2.8")
 lazy val scala212 = "2.12.13"
 lazy val scala213 = "2.13.4"
 
+lazy val swaggerPlayVersion = "3.1.0"
+
 lazy val root = (project in file("."))
   .aggregate(plugin, testPlugin)
   .aggregate(runner.projectRefs: _*)
@@ -66,7 +68,7 @@ lazy val runner = (projectMatrix in file("runner"))
     _.settings(
       moduleName := "sbt-swagger-play2.8-runner",
       libraryDependencies ++= Seq(
-        "com.github.dwickern" %% "swagger-play2.8" % "3.0.0",
+        "com.github.dwickern" %% "swagger-play2.8" % swaggerPlayVersion,
         "io.swagger" % "swagger-parser" % "1.0.54",
       ),
     )
@@ -77,7 +79,7 @@ lazy val runner = (projectMatrix in file("runner"))
     _.settings(
       moduleName := "sbt-swagger-play2.7-runner",
       libraryDependencies ++= Seq(
-        "com.github.dwickern" %% "swagger-play2.7" % "3.0.0",
+        "com.github.dwickern" %% "swagger-play2.7" % swaggerPlayVersion,
         "io.swagger" % "swagger-parser" % "1.0.47",
       ),
     )
