@@ -1,0 +1,3 @@
+> runProd --no-exit-sbt
+> verifyHttpRequest http://localhost:9000/assets/swagger.json
+> stopProd --no-exit-sbt

@@ -1,0 +1,2 @@
+> web-assets:assets
+> verifyJsonEqual target/web/public/main/swagger.json expected.json

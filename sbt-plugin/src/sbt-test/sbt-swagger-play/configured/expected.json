@@ -1,0 +1,34 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "description" : "my description",
+    "version" : "beta",
+    "title" : "my title",
+    "contact" : {
+      "name" : "my contact"
+    },
+    "license" : {
+      "name" : "my license",
+      "url" : "/license"
+    }
+  },
+  "basePath" : "/api",
+  "paths" : {
+    "/" : {
+      "get" : {
+        "summary" : "say hello",
+        "description" : "",
+        "operationId" : "index",
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}
