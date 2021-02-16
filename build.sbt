@@ -44,7 +44,6 @@ lazy val runner = (projectMatrix in file("runner"))
   .settings(
     name := "sbt-swagger-play-runner",
     libraryDependencies ++= Seq(
-      "io.swagger" % "swagger-parser" % "1.0.54",
       "org.scalatest" %% "scalatest" % "3.2.2" % Test,
       "ch.qos.logback" % "logback-classic" % "1.2.3" % Test,
     ),
@@ -54,7 +53,10 @@ lazy val runner = (projectMatrix in file("runner"))
     axisValues = Seq(play28, VirtualAxis.jvm),
     _.settings(
       moduleName := "sbt-swagger-play2.8-runner",
-      libraryDependencies += "com.github.dwickern" %% "swagger-play2.8" % "3.0.0",
+      libraryDependencies ++= Seq(
+        "com.github.dwickern" %% "swagger-play2.8" % "3.0.0",
+        "io.swagger" % "swagger-parser" % "1.0.54",
+      ),
     )
   )
   .customRow(
@@ -62,6 +64,9 @@ lazy val runner = (projectMatrix in file("runner"))
     axisValues = Seq(play27, VirtualAxis.jvm),
     _.settings(
       moduleName := "sbt-swagger-play2.7-runner",
-      libraryDependencies += "com.github.dwickern" %% "swagger-play2.7" % "3.0.0",
+      libraryDependencies ++= Seq(
+        "com.github.dwickern" %% "swagger-play2.7" % "3.0.0",
+        "io.swagger" % "swagger-parser" % "1.0.47",
+      ),
     )
   )
