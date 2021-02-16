@@ -10,9 +10,10 @@ lazy val scala213 = "2.13.4"
 lazy val root = (project in file("."))
   .aggregate(plugin, testPlugin)
   .aggregate(runner.projectRefs: _*)
-  .settings {
+  .settings(
+    name := "sbt-swagger-play",
     publish / skip := true
-  }
+  )
 
 lazy val plugin = (project in file("sbt-plugin"))
   .enablePlugins(BuildInfoPlugin)
