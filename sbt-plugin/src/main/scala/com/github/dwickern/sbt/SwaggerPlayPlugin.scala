@@ -5,7 +5,7 @@ import com.typesafe.sbt.web.SbtWeb.autoImport.Assets
 import play.core.PlayVersion
 import play.sbt.PlayWeb
 import sbt.Keys._
-import sbt.{io => _, _}
+import sbt._
 
 import java.net.URLClassLoader
 import java.security.{AccessController, PrivilegedAction}
@@ -77,12 +77,52 @@ object SwaggerPlayPlugin extends AutoPlugin {
       }
     },
     swaggerPlayResourceGenerator := {
-      val out = swaggerPlayTarget.value
-      IO.write(out, swaggerPlayJson.value)
-      Seq(out)
+      if (swaggerPlayResourceGenerator.inputFileChanges.hasChanges || !swaggerPlayTarget.value.exists()) {
+        val jsonFile = swaggerPlayTarget.value
+        IO.write(jsonFile, swaggerPlayJson.value)
+        Seq(jsonFile)
+      } else {
+        Seq(swaggerPlayTarget.value)
+      }
     },
+    swaggerPlayResourceGenerator / sbt.nio.Keys.fileInputs ++= monitoredFilesSetting.value.map(dir => Glob(dir) / **),
     (Assets / resourceGenerators) += swaggerPlayResourceGenerator.taskValue
   )
+
+  /**
+   * Copied from [[play.sbt.PlayCommands.playMonitoredFilesTask]] except it's a setting
+   * rather than a task so that it can be used as [[sbt.nio.Keys.fileInputs]]
+   */
+  private def monitoredFilesSetting: Def.Initialize[List[File]] = Def.settingDyn {
+    val projectRef = thisProjectRef.value
+
+    def filter = ScopeFilter(
+      inDependencies(projectRef),
+      inConfigurations(Compile, Assets)
+    )
+
+    Def.setting {
+      val allDirectories =
+        (unmanagedSourceDirectories ?? Nil).all(filter).value.flatten ++
+          (unmanagedResourceDirectories ?? Nil).all(filter).value.flatten
+
+      val existingDirectories = allDirectories.filter(_.exists)
+
+      // Filter out directories that are sub paths of each other, by sorting them lexicographically, then folding, excluding
+      // entries if the previous entry is a sub path of the current
+      val distinctDirectories = existingDirectories
+        .map(_.getCanonicalFile.toPath)
+        .sorted
+        .foldLeft(List.empty[java.nio.file.Path]) { (result, next) =>
+          result.headOption match {
+            case Some(previous) if next.startsWith(previous) => result
+            case _                                           => next :: result
+          }
+        }
+
+      distinctDirectories.map(_.toFile)
+    }
+  }
 
   private def projectDependencyClasspathTask: Def.Initialize[Task[Classpath]] = Def.taskDyn {
     val thisProj = thisProjectRef.value
