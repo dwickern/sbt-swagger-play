@@ -27,7 +27,7 @@ object SwaggerPlayPlugin extends AutoPlugin {
   import autoImport._
 
   override lazy val projectSettings = Seq(
-    swaggerPlayTarget := (resourceManaged in Assets).value / "swagger.json",
+    swaggerPlayTarget := (Assets / resourceManaged).value / "swagger.json",
     swaggerPlayValidate := true,
     swaggerPlayHost := None,
     swaggerPlayRunnerArtifact := {
