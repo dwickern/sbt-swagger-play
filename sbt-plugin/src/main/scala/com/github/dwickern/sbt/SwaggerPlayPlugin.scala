@@ -16,9 +16,9 @@ object SwaggerPlayPlugin extends AutoPlugin {
 
   object autoImport {
     val swaggerPlayJson = taskKey[String]("Generated swagger JSON content")
-    val swaggerPlayValidate = taskKey[Boolean]("Whether to run extra validation")
-    val swaggerPlayHost = taskKey[Option[String]]("Swagger hostname entry")
-    val swaggerPlayTarget = taskKey[File]("Target file path for swagger.json")
+    val swaggerPlayValidate = settingKey[Boolean]("Whether to run extra validation")
+    val swaggerPlayHost = settingKey[Option[String]]("Swagger hostname entry")
+    val swaggerPlayTarget = settingKey[File]("Target file path for swagger.json")
     val swaggerPlayResourceGenerator = taskKey[Seq[File]]("The sbt-web resource generator which produces swagger.json")
     val swaggerPlayRunnerArtifact = settingKey[ModuleID]("The runner artifact for the appropriate play+scala version")
     val swaggerPlayRunnerClasspath = taskKey[Classpath]("Injected classpath entries for the runner and its dependencies")
