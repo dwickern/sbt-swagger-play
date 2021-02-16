@@ -49,7 +49,7 @@ object HiddenPropertyModels {
   )
 }
 
-class SwaggerPlayTest extends AnyFunSpec with Matchers with LoneElement {
+class ValidationTest extends AnyFunSpec with Matchers with LoneElement {
   describe("enumerations") {
     it("incorrectly serialize to an Enumeration#Value if no dataType is set") {
       val model = read[EnumerationModels.Bad]
