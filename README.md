@@ -14,7 +14,7 @@ Advantages:
 
 In `project/plugins.sbt`:
 ```sbt
-addSbtPlugin("com.github.dwickern" % "sbt-swagger-play" % "0.2.0")
+addSbtPlugin("com.github.dwickern" % "sbt-swagger-play" % "0.3.0")
 ```
 
 In `build.sbt`:
