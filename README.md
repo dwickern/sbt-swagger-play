@@ -1,7 +1,7 @@
 # sbt-swagger-play
 
 [![build](https://github.com/dwickern/sbt-swagger-play/workflows/build/badge.svg)](https://github.com/dwickern/sbt-swagger-play/actions)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.dwickern/sbt-swagger-play_2.12_1.0/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.dwickern/sbt-swagger-play_2.12_1.0)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.dwickern/sbt-swagger-play/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.dwickern/sbt-swagger-play)
 
 An sbt plugin which runs [swagger-play](https://github.com/dwickern/swagger-play) as part of your build.
 
