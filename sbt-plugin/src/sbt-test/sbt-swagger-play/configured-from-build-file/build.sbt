@@ -11,7 +11,6 @@ lazy val root = (project in file("."))
       "swagger.api.info.contact" -> "my contact",
       "swagger.api.info.title" -> "my title",
       "swagger.api.info.description" -> "my description",
-      "swagger.api.info.termsOfService" -> "",
       "swagger.api.info.license" -> "my license",
       "swagger.api.info.licenseUrl" -> "/license"
     ))

@@ -9,6 +9,9 @@ import sbt._
 
 import java.net.URLClassLoader
 import java.security.{AccessController, PrivilegedAction}
+import java.util.{Map => JMap}
+
+import scala.jdk.CollectionConverters._
 
 object SwaggerPlayPlugin extends AutoPlugin {
   override def trigger: PluginTrigger = allRequirements
@@ -71,11 +74,12 @@ object SwaggerPlayPlugin extends AutoPlugin {
       withContextClassLoader(classLoader) {
         import scala.language.reflectiveCalls
         type SwaggerRunner = {
-          def run(rootPath: File, host: String, validate: Boolean, configuration: Option[Map[String, Any]]): String
+          def run(rootPath: File, host: String, validate: Boolean, configuration: JMap[String, Any]): String
         }
         val mainClass = classLoader.loadClass("com.github.dwickern.swagger.SwaggerRunner$")
         val mainInstance = mainClass.getField("MODULE$").get(null).asInstanceOf[SwaggerRunner]
-        mainInstance.run(baseDirectory.value, swaggerPlayHost.value.orNull, swaggerPlayValidate.value, swaggerPlayConfiguration.value)
+        val conf = swaggerPlayConfiguration.value.map(_.asJava).getOrElse(null)
+        mainInstance.run(baseDirectory.value, swaggerPlayHost.value.orNull, swaggerPlayValidate.value, conf)
       }
     },
     swaggerPlayResourceGenerator := {
