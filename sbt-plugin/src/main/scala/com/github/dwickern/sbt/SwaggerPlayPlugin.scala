@@ -23,6 +23,7 @@ object SwaggerPlayPlugin extends AutoPlugin {
     val swaggerPlayRunnerArtifact = settingKey[ModuleID]("The runner artifact for the appropriate play+scala version")
     val swaggerPlayRunnerClasspath = taskKey[Classpath]("Injected classpath entries for the runner and its dependencies")
     val swaggerPlayClassLoader = taskKey[ClassLoader]("ClassLoader for the Play application containing the injected runner classes")
+    val swaggerPlayConfiguration = settingKey[Option[Map[String, Any]]]("Play configuration to use instead of reading the application.conf file")
   }
   import autoImport._
 
@@ -30,6 +31,7 @@ object SwaggerPlayPlugin extends AutoPlugin {
     swaggerPlayTarget := (Assets / resourceManaged).value / "swagger.json",
     swaggerPlayValidate := true,
     swaggerPlayHost := None,
+    swaggerPlayConfiguration := None,
     swaggerPlayRunnerArtifact := {
       val playVersion = CrossVersion.partialVersion(PlayVersion.current) match {
         case Some((major, minor)) => s"$major.$minor"
@@ -69,11 +71,11 @@ object SwaggerPlayPlugin extends AutoPlugin {
       withContextClassLoader(classLoader) {
         import scala.language.reflectiveCalls
         type SwaggerRunner = {
-          def run(rootPath: File, host: String, validate: Boolean): String
+          def run(rootPath: File, host: String, validate: Boolean, configuration: Option[Map[String, Any]]): String
         }
         val mainClass = classLoader.loadClass("com.github.dwickern.swagger.SwaggerRunner$")
         val mainInstance = mainClass.getField("MODULE$").get(null).asInstanceOf[SwaggerRunner]
-        mainInstance.run(baseDirectory.value, swaggerPlayHost.value.orNull, swaggerPlayValidate.value)
+        mainInstance.run(baseDirectory.value, swaggerPlayHost.value.orNull, swaggerPlayValidate.value, swaggerPlayConfiguration.value)
       }
     },
     swaggerPlayResourceGenerator := {

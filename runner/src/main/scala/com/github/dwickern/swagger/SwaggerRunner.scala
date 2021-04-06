@@ -4,7 +4,7 @@ import io.swagger.converter.ModelConverters
 import io.swagger.parser.SwaggerParser
 import io.swagger.util.Json
 import org.slf4j.LoggerFactory
-import play.api.{Environment, Mode}
+import play.api.{Configuration, Environment, Mode}
 import play.modules.swagger.SwaggerPluginImpl
 
 import java.io.File
@@ -12,10 +12,10 @@ import java.io.File
 object SwaggerRunner {
   private lazy val logger = LoggerFactory.getLogger(getClass)
 
-  def run(rootPath: File, host: String, validate: Boolean): String = {
+  def run(rootPath: File, host: String, validate: Boolean, configuration: Option[Map[String, Any]]): String = {
     val classLoader = getClass.getClassLoader
     val env = Environment(rootPath, classLoader, Mode.Dev)
-    val conf = play.api.Configuration.load(env)
+    val conf = configuration.map(Configuration.from(_)).getOrElse(Configuration.load(env))
     if (validate) {
       ModelConverters.getInstance().addConverter(new ValidationModelConverter(warning => logger.warn(warning.message)))
     }
