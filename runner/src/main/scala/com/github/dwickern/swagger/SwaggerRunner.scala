@@ -22,7 +22,7 @@ object SwaggerRunner {
     val conf = if (configuration == null) {
       Configuration.load(env)
     } else {
-      Configuration.from(defaultConfiguration ++ configuration.asScala)
+      Configuration.reference ++ Configuration.from(configuration.asScala.toMap)
     }
     if (validate) {
       ModelConverters.getInstance().addConverter(new ValidationModelConverter(warning => logger.warn(warning.message)))
@@ -35,23 +35,4 @@ object SwaggerRunner {
     }
     json
   }
-
-  // as map-based configurations will throw if keys are missing, we need to create a map with defaults for them
-  private lazy val defaultConfiguration: Map[String, Any] = Map[String, Any](
-    // https://github.com/swagger-api/swagger-play/blob/master/src/main/scala/play/modules/swagger/PlaySwaggerConfig.scala#L28
-    "api.version" -> "",
-    "swagger.api.info.description" -> "",
-    "swagger.api.host" -> "",
-    "swagger.api.basepath" -> "",
-    "swagger.api.schemes" -> Nil,
-    "swagger.api.info.title" -> "",
-    "swagger.api.info.contact" -> "",
-    "swagger.api.info.termsOfServiceUrl" -> "",
-    "swagger.api.info.license" -> "",
-    "swagger.api.info.licenseUrl" -> "",
-    "swagger.filter" -> null,
-
-    // https://github.com/swagger-api/swagger-play/blob/master/src/main/scala/play/modules/swagger/SwaggerPlugin.scala#L52
-    "play.http.router" -> null
-  )
 }
