@@ -6,7 +6,6 @@ lazy val root = (project in file("."))
     libraryDependencies += guice,
     libraryDependencies += "io.swagger" % "swagger-annotations" % "1.6.1",
     swaggerPlayConfiguration := Some(Map(
-      "play.http.secret.key" -> "HH<9q6]:4=Erks[qh/qdRyy/fsNaB_BBf``QAeIR12Hy3KP9SJnx?8z98c5U`e22",
       "api.version" -> version.value,
       "swagger.api.basepath" -> "/api",
       "swagger.api.info.contact" -> "my contact",
