@@ -1,2 +1,6 @@
 > web-assets:assets
-> verifyJsonEqual target/web/public/main/swagger.json expected.json
+> verifyJsonEqual target/web/public/main/swagger.json expected1.json
+
+> set version := "2.0"
+> web-assets:assets
+> verifyJsonEqual target/web/public/main/swagger.json expected2.json

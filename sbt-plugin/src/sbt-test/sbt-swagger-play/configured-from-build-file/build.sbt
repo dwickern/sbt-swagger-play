@@ -1,12 +1,13 @@
 lazy val root = (project in file("."))
   .enablePlugins(PlayScala)
   .settings(
+    version := "1.0",
     scalaVersion := sys.props("scala.version"),
     libraryDependencies += guice,
     libraryDependencies += "io.swagger" % "swagger-annotations" % "1.6.1",
     swaggerPlayConfiguration := Some(Map(
       "play.http.secret.key" -> "HH<9q6]:4=Erks[qh/qdRyy/fsNaB_BBf``QAeIR12Hy3KP9SJnx?8z98c5U`e22",
-      "api.version" -> "beta",
+      "api.version" -> version.value,
       "swagger.api.basepath" -> "/api",
       "swagger.api.info.contact" -> "my contact",
       "swagger.api.info.title" -> "my title",

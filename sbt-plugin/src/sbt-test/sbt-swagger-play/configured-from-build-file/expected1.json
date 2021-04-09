@@ -2,7 +2,7 @@
   "swagger" : "2.0",
   "info" : {
     "description" : "my description",
-    "version" : "beta",
+    "version" : "1.0",
     "title" : "my title",
     "contact" : {
       "name" : "my contact"
