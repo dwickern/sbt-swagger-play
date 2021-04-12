@@ -10,3 +10,6 @@ project/target
 .settings
 bin
 .bsp
+.metals
+**/.bloop
+**/metals.sbt

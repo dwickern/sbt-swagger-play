@@ -1,14 +1,18 @@
 package com.github.dwickern.sbt
 
+import com.typesafe.config.{Config, ConfigFactory, ConfigRenderOptions}
 import com.typesafe.sbt.web.SbtWeb
 import com.typesafe.sbt.web.SbtWeb.autoImport.Assets
 import play.core.PlayVersion
 import play.sbt.PlayWeb
 import sbt.Keys._
 import sbt._
+import sjsonnew.IsoString
 
 import java.net.URLClassLoader
 import java.security.{AccessController, PrivilegedAction}
+import java.util.{Map => JMap}
+import scala.jdk.CollectionConverters._
 
 object SwaggerPlayPlugin extends AutoPlugin {
   override def trigger: PluginTrigger = allRequirements
@@ -23,6 +27,7 @@ object SwaggerPlayPlugin extends AutoPlugin {
     val swaggerPlayRunnerArtifact = settingKey[ModuleID]("The runner artifact for the appropriate play+scala version")
     val swaggerPlayRunnerClasspath = taskKey[Classpath]("Injected classpath entries for the runner and its dependencies")
     val swaggerPlayClassLoader = taskKey[ClassLoader]("ClassLoader for the Play application containing the injected runner classes")
+    val swaggerPlayConfiguration = settingKey[Option[Map[String, Any]]]("Play configuration to use instead of reading the application.conf file")
   }
   import autoImport._
 
@@ -30,6 +35,7 @@ object SwaggerPlayPlugin extends AutoPlugin {
     swaggerPlayTarget := (Assets / resourceManaged).value / "swagger.json",
     swaggerPlayValidate := true,
     swaggerPlayHost := None,
+    swaggerPlayConfiguration := None,
     swaggerPlayRunnerArtifact := {
       val playVersion = CrossVersion.partialVersion(PlayVersion.current) match {
         case Some((major, minor)) => s"$major.$minor"
@@ -69,24 +75,38 @@ object SwaggerPlayPlugin extends AutoPlugin {
       withContextClassLoader(classLoader) {
         import scala.language.reflectiveCalls
         type SwaggerRunner = {
-          def run(rootPath: File, host: String, validate: Boolean): String
+          def run(rootPath: File, host: String, validate: Boolean, configuration: JMap[String, Any]): String
         }
         val mainClass = classLoader.loadClass("com.github.dwickern.swagger.SwaggerRunner$")
         val mainInstance = mainClass.getField("MODULE$").get(null).asInstanceOf[SwaggerRunner]
-        mainInstance.run(baseDirectory.value, swaggerPlayHost.value.orNull, swaggerPlayValidate.value)
+        val conf = swaggerPlayConfiguration.value.map(_.asJava).orNull
+        mainInstance.run(baseDirectory.value, swaggerPlayHost.value.orNull, swaggerPlayValidate.value, conf)
       }
     },
-    swaggerPlayResourceGenerator := {
-      if (swaggerPlayResourceGenerator.inputFileChanges.hasChanges || !swaggerPlayTarget.value.exists()) {
-        val jsonFile = swaggerPlayTarget.value
-        IO.write(jsonFile, swaggerPlayJson.value)
-        Seq(jsonFile)
-      } else {
-        Seq(swaggerPlayTarget.value)
+    swaggerPlayResourceGenerator := Def.taskDyn {
+      import sbt.util.CacheImplicits._
+      val cache = streams.value.cacheStoreFactory.make("swaggerPlayResourceGenerator")
+      val cached = Tracked.inputChanged[(Option[String], Option[Config]), Def.Initialize[Task[Seq[File]]]](cache) { case (settingsChanged, in) =>
+        if (settingsChanged || swaggerPlayResourceGenerator.inputFileChanges.hasChanges || !swaggerPlayTarget.value.exists()) {
+          Def.task {
+            IO.write(swaggerPlayTarget.value, swaggerPlayJson.value)
+            Seq(swaggerPlayTarget.value)
+          }
+        } else {
+          Def.task(Seq(swaggerPlayTarget.value))
+        }
       }
-    },
+      val host = swaggerPlayHost.value
+      val config = swaggerPlayConfiguration.value.map(conf => ConfigFactory.parseMap(conf.asJava))
+      cached((host, config))
+    }.value,
     swaggerPlayResourceGenerator / sbt.nio.Keys.fileInputs ++= monitoredFilesSetting.value.map(dir => Glob(dir) / **),
     (Assets / resourceGenerators) += swaggerPlayResourceGenerator.taskValue
+  )
+
+  private implicit val configFormat: IsoString[Config] = IsoString.iso[Config](
+    _.root().render(ConfigRenderOptions.concise()),
+    ConfigFactory.parseString
   )
 
   /**
