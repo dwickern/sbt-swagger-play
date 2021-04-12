@@ -28,7 +28,38 @@ GET     /swagger.json        controllers.Assets.at(path="/public", file="swagger
 ```
 
 That's it. Now you can annotate your REST endpoints and models with Swagger annotations.
-Also make sure to set up your [application.conf](https://github.com/dwickern/swagger-play#applicationconf---config-options).
+
+## Configuration
+
+This plugin supports the [swagger-play configuration options](https://github.com/dwickern/swagger-play#applicationconf---config-options) in `application.conf`:
+```hocon
+api.version = "beta"
+swagger.api.basepath = "/api"
+swagger.api.info = {
+  contact = "my contact"
+  title = "my title"
+  description = "my description"
+  termsOfService = ""
+  license = "my license"
+  licenseUrl = "/license"
+}
+```
+See [example application.conf](sbt-plugin/src/sbt-test/sbt-swagger-play/configured/conf/application.conf).
+
+Alternatively, you can pass those same configuration options (fully-qualified) in `build.sbt`.
+This means you can easily pass settings from the build:
+```sbt
+swaggerPlayConfiguration := Some(Map(
+  "api.version" -> version.value,
+  "swagger.api.basepath" -> "/api",
+  "swagger.api.info.contact" -> "my contact",
+  "swagger.api.info.title" -> "my title",
+  "swagger.api.info.description" -> "my description",
+  "swagger.api.info.license" -> "my license",
+  "swagger.api.info.licenseUrl" -> "/license"
+))
+```
+See [example build.sbt](sbt-plugin/src/sbt-test/sbt-swagger-play/configured-from-build-file/build.sbt)
 
 ## Migrating from swagger-play
 
