@@ -37,11 +37,15 @@ object SwaggerPlayPlugin extends AutoPlugin {
     swaggerPlayHost := None,
     swaggerPlayConfiguration := None,
     swaggerPlayRunnerArtifact := {
-      val playVersion = CrossVersion.partialVersion(PlayVersion.current) match {
-        case Some((major, minor)) => s"$major.$minor"
-        case None =>
-      }
-      "com.github.dwickern" %% s"sbt-swagger-play$playVersion-runner" % BuildInfo.version
+      val runnerVersions = Map(
+        SemanticSelector(">=2.8.8 <2.9.0") -> "sbt-swagger-play2.8.8-runner",
+        SemanticSelector(">=2.8.0 <2.8.8") -> "sbt-swagger-play2.8-runner",
+        SemanticSelector("=2.7") -> "sbt-swagger-play2.7-runner",
+      )
+      val playVersion = VersionNumber(PlayVersion.current)
+      val runner = runnerVersions.collectFirst { case (semver, runner) if playVersion.matchesSemVer(semver) => runner }
+        .getOrElse { sys.error(s"No runner found for Play version: ${PlayVersion.current}") }
+      "com.github.dwickern" %% runner % BuildInfo.version
     },
     swaggerPlayRunnerClasspath := {
       val log = streams.value.log("sbt-swagger-play")

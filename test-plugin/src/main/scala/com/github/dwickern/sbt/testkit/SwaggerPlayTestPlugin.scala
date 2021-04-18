@@ -38,17 +38,17 @@ object SwaggerPlayTestPlugin extends AutoPlugin {
 
   def httpRequest(requestUrl: URL): Unit = {
     @tailrec def read(attempts: Int): String = {
-      if (attempts < 0) {
-        sys.error(s"Failed to read from $requestUrl")
-      }
       try {
         val conn = requestUrl.openConnection().asInstanceOf[java.net.HttpURLConnection]
         if (conn.getResponseCode != 200) {
-          sys.error(s"response code = ${conn.getResponseCode}")
+          throw new Exception(s"response code = ${conn.getResponseCode}")
         }
         IO.readStream(conn.getInputStream)
       } catch {
-        case _: java.net.ConnectException =>
+        case e: Exception =>
+          if (attempts <= 0) {
+            throw new Exception(s"Failed to read from $requestUrl", e)
+          }
           // retry
           Thread.sleep(1000)
           read(attempts - 1)
