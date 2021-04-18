@@ -2,6 +2,7 @@ ThisBuild / organization := "com.github.dwickern"
 
 lazy val play27 = ConfigAxis("play27", "play2.7")
 lazy val play28 = ConfigAxis("play28", "play2.8")
+lazy val play288 = ConfigAxis("play288", "play2.8.8")
 
 lazy val scala212 = "2.12.13"
 lazy val scala213 = "2.13.4"
@@ -29,7 +30,7 @@ lazy val plugin = (project in file("sbt-plugin"))
     scriptedLaunchOpts ++= Seq(
       "-Xmx1024M",
       s"-Dplugin.version=${version.value}",
-      "-Dplay.version=2.8.7",
+      "-Dplay.version=2.8.8",
       "-Dscala.version=2.13.3"
     ),
     scriptedDependencies := {
@@ -60,6 +61,19 @@ lazy val runner = (projectMatrix in file("runner"))
       "org.scalatest" %% "scalatest" % "3.2.2" % Test,
       "ch.qos.logback" % "logback-classic" % "1.2.3" % Test,
     ),
+  )
+  .customRow(
+    scalaVersions = Seq(scala213, scala212),
+    axisValues = Seq(play288, VirtualAxis.jvm),
+    _.settings(
+      moduleName := "sbt-swagger-play2.8.8-runner",
+      libraryDependencies ++= Seq(
+        "com.github.dwickern" %% "swagger-play2.8" % swaggerPlayVersion,
+        "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.11.1",
+        "io.swagger" % "swagger-core" % "1.6.2",
+        "io.swagger" % "swagger-parser" % "1.0.54",
+      ),
+    )
   )
   .customRow(
     scalaVersions = Seq(scala213, scala212),
