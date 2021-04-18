@@ -36,7 +36,16 @@ lazy val plugin = (projectMatrix in file("sbt-plugin"))
   )
 
 lazy val pluginTests = plugin
+  .enablePlugins(ScriptedPlugin)
   .settings(
+    compile / skip := true,
+    publish / skip := true,
+    ideSkipProject.withRank(KeyRanks.Invisible) := true,
+    scriptedLaunchOpts ++= Seq(
+      "-Xmx1024M",
+      s"-Dplugin.version=${version.value}"
+    ),
+    scriptedBufferLog := true,
     scriptedDependencies := Def.task(())
       .dependsOn(plugin.jvm(false) / publishLocal)
       .dependsOn(testPlugin / publishLocal)

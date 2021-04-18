@@ -1,5 +1,3 @@
-import sbtide.Keys.ideSkipProject
-import sbt.Keys._
 import sbt.ScriptedPlugin.autoImport._
 import sbt._
 import sbt.internal.ProjectMatrix
@@ -14,18 +12,11 @@ object PlayAxis {
     def scriptedTests(playAxis: PlayAxis, scalaVersion: String): ProjectMatrix = matrix.customRow(
       autoScalaLibrary = false,
       axisValues = Seq(playAxis, VirtualAxis.scalaPartialVersion(scalaVersion), VirtualAxis.jvm),
-      _.enablePlugins(ScriptedPlugin).settings(
-        compile / skip := true,
-        publish / skip := true,
-        ideSkipProject := true,
-        moduleName := s"${moduleName.value}-test-${playAxis.version}-$scalaVersion",
+      _.settings(
         scriptedLaunchOpts ++= Seq(
-          "-Xmx1024M",
-          s"-Dplugin.version=${version.value}",
           s"-Dscala.version=$scalaVersion",
           s"-Dplay.version=${playAxis.version}"
-        ),
-        scriptedBufferLog := true
+        )
       )
     )
   }
