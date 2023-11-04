@@ -81,8 +81,8 @@ lazy val runner = (projectMatrix in file("runner"))
     publishSettings,
     name := "sbt-swagger-play-runner",
     libraryDependencies ++= Seq(
-      "org.scalatest" %% "scalatest" % "3.2.2" % Test,
-      "ch.qos.logback" % "logback-classic" % "1.2.3" % Test,
+      "org.scalatest" %% "scalatest" % "3.2.17" % Test,
+      "ch.qos.logback" % "logback-classic" % "1.2.12" % Test,
     ),
   )
   .customRow(
