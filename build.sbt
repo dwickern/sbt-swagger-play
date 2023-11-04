@@ -9,7 +9,7 @@ lazy val play288 = PlayAxis("2.8.8")
 lazy val scala212 = "2.12.13"
 lazy val scala213 = "2.13.4"
 
-lazy val swaggerPlayVersion = "3.1.0"
+lazy val swaggerPlayVersion = "4.0.0"
 
 lazy val root = (project in file("."))
   .aggregate(plugin.projectRefs: _*)
