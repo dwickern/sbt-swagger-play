@@ -1,5 +1,9 @@
 ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always
 
-addSbtPlugin("com.github.dwickern" % "sbt-swagger-play" % sys.props("plugin.version"))
-addSbtPlugin("com.github.dwickern" % "sbt-swagger-play-testkit" % sys.props("plugin.version"))
-addSbtPlugin("com.typesafe.play" % "sbt-plugin" % sys.props("play.version"))
+val pluginVersion = sys.props("plugin.version")
+val playVersion = sys.props("play.version")
+val playOrg = if (playVersion.startsWith("2.")) "com.typesafe.play" else "org.playframework"
+
+addSbtPlugin("com.github.dwickern" % "sbt-swagger-play" % pluginVersion)
+addSbtPlugin("com.github.dwickern" % "sbt-swagger-play-testkit" % pluginVersion)
+addSbtPlugin(playOrg % "sbt-plugin" % playVersion)
