@@ -18,7 +18,7 @@ trait ValidationWarning {
 class ValidationModelConverter(warn: ValidationWarning => Unit) extends ModelConverter {
   def resolveProperty(propertyType: Type, context: ModelConverterContext, annotations: Array[Annotation], chain: util.Iterator[ModelConverter]): Property = {
     val hasHiddenAnnotation = Option(annotations)
-      .getOrElse(Array.empty)
+      .getOrElse(Array.empty[Annotation])
       .exists {
         case p: ApiModelProperty if p.hidden => true
         case _ => false

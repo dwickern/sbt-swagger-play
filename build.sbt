@@ -5,11 +5,14 @@ ThisBuild / organization := "com.github.dwickern"
 lazy val play27 = PlayAxis("2.7.9")
 lazy val play28 = PlayAxis("2.8.7")
 lazy val play288 = PlayAxis("2.8.8")
+lazy val play29 = PlayAxis("2.9.0")
+lazy val play30 = PlayAxis("3.0.0")
 
 lazy val scala212 = "2.12.13"
 lazy val scala213 = "2.13.4"
+lazy val scala3 = "3.3.1"
 
-lazy val swaggerPlayVersion = "3.1.0"
+lazy val swaggerPlayVersion = "4.0.0"
 
 lazy val root = (project in file("."))
   .aggregate(plugin.projectRefs: _*)
@@ -52,6 +55,10 @@ lazy val pluginTests = plugin
       .dependsOn(runner.projectRefs.map(_ / publishLocal).join)
       .value
   )
+  .scriptedTests(play30, scala3)
+  .scriptedTests(play30, scala213)
+  .scriptedTests(play29, scala3)
+  .scriptedTests(play29, scala213)
   .scriptedTests(play288, scala213)
   .scriptedTests(play288, scala212)
   .scriptedTests(play28, scala213)
@@ -74,9 +81,35 @@ lazy val runner = (projectMatrix in file("runner"))
     publishSettings,
     name := "sbt-swagger-play-runner",
     libraryDependencies ++= Seq(
-      "org.scalatest" %% "scalatest" % "3.2.2" % Test,
-      "ch.qos.logback" % "logback-classic" % "1.2.3" % Test,
+      "org.scalatest" %% "scalatest" % "3.2.17" % Test,
+      "ch.qos.logback" % "logback-classic" % "1.2.12" % Test,
     ),
+  )
+  .customRow(
+    scalaVersions = Seq(scala3, scala213),
+    axisValues = Seq(play30, VirtualAxis.jvm),
+    _.settings(
+      moduleName := "sbt-swagger-play3.0-runner",
+      libraryDependencies ++= Seq(
+        "com.github.dwickern" %% "swagger-play3.0" % swaggerPlayVersion,
+        "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.14.3",
+        "io.swagger" % "swagger-core" % "1.6.11",
+        "io.swagger" % "swagger-parser" % "1.0.67",
+      ),
+    )
+  )
+  .customRow(
+    scalaVersions = Seq(scala3, scala213),
+    axisValues = Seq(play29, VirtualAxis.jvm),
+    _.settings(
+      moduleName := "sbt-swagger-play2.9-runner",
+      libraryDependencies ++= Seq(
+        "com.github.dwickern" %% "swagger-play2.9" % swaggerPlayVersion,
+        "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.14.3",
+        "io.swagger" % "swagger-core" % "1.6.11",
+        "io.swagger" % "swagger-parser" % "1.0.67",
+      ),
+    )
   )
   .customRow(
     scalaVersions = Seq(scala213, scala212),
