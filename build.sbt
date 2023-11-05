@@ -148,8 +148,6 @@ lazy val runner = (projectMatrix in file("runner"))
   )
 
 lazy val publishSettings = Seq(
-  publishTo := sonatypePublishToBundle.value,
-  releaseCrossBuild := true,
   pomExtra := {
     <url>https://github.com/dwickern/sbt-swagger-play</url>
       <licenses>
@@ -171,20 +169,4 @@ lazy val publishSettings = Seq(
         </developer>
       </developers>
   }
-)
-
-import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
-
-releaseProcess := Seq[ReleaseStep](
-  checkSnapshotDependencies,
-  inquireVersions,
-  runClean,
-  runTest,
-  setReleaseVersion,
-  commitReleaseVersion,
-  tagRelease,
-  releaseStepCommandAndRemaining("+publishSigned"),
-  releaseStepCommand("sonatypeBundleRelease"),
-  setNextVersion,
-  commitNextVersion,
 )
