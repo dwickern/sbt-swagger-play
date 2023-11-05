@@ -38,9 +38,11 @@ object SwaggerPlayPlugin extends AutoPlugin {
     swaggerPlayConfiguration := None,
     swaggerPlayRunnerArtifact := {
       val runnerVersions = Map(
+        SemanticSelector(">=3.0.0")        -> "sbt-swagger-play3.0-runner",
+        SemanticSelector(">=2.9.0 <3.0.0") -> "sbt-swagger-play2.9-runner",
         SemanticSelector(">=2.8.8 <2.9.0") -> "sbt-swagger-play2.8.8-runner",
         SemanticSelector(">=2.8.0 <2.8.8") -> "sbt-swagger-play2.8-runner",
-        SemanticSelector("=2.7") -> "sbt-swagger-play2.7-runner",
+        SemanticSelector("=2.7")           -> "sbt-swagger-play2.7-runner",
       )
       val playVersion = VersionNumber(PlayVersion.current)
       val runner = runnerVersions.collectFirst { case (semver, runner) if playVersion.matchesSemVer(semver) => runner }
