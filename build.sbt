@@ -29,7 +29,6 @@ lazy val plugin = (projectMatrix in file("sbt-plugin"))
     autoScalaLibrary = false,
     axisValues = Seq(VirtualAxis.jvm),
     _.enablePlugins(BuildInfoPlugin).settings(
-      publishSettings,
       name := "sbt-swagger-play",
       sbtPlugin := true,
       addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.7.9" % Provided),
@@ -68,7 +67,6 @@ lazy val pluginTests = plugin
 
 lazy val testPlugin = (project in file("test-plugin"))
   .settings(
-    publishSettings,
     name := "sbt-swagger-play-testkit",
     sbtPlugin := true,
     libraryDependencies += "com.typesafe.play" %% "play-json" % "2.9.2",
@@ -78,7 +76,6 @@ lazy val testPlugin = (project in file("test-plugin"))
 
 lazy val runner = (projectMatrix in file("runner"))
   .settings(
-    publishSettings,
     name := "sbt-swagger-play-runner",
     libraryDependencies ++= Seq(
       "org.scalatest" %% "scalatest" % "3.2.17" % Test,
@@ -147,26 +144,13 @@ lazy val runner = (projectMatrix in file("runner"))
     )
   )
 
-lazy val publishSettings = Seq(
-  pomExtra := {
-    <url>https://github.com/dwickern/sbt-swagger-play</url>
-      <licenses>
-        <license>
-          <name>MIT</name>
-          <url>https://raw.githubusercontent.com/dwickern/sbt-swagger-play/master/LICENSE</url>
-          <distribution>repo</distribution>
-        </license>
-      </licenses>
-      <scm>
-        <url>git@github.com:dwickern/sbt-swagger-play.git</url>
-        <connection>scm:git:git@github.com:dwickern/sbt-swagger-play.git</connection>
-      </scm>
-      <developers>
-        <developer>
-          <id>dwickern</id>
-          <name>Derek Wickern</name>
-          <url>dwickern@gmail.com</url>
-        </developer>
-      </developers>
-  }
+ThisBuild / homepage := scmInfo.value.map(_.browseUrl)
+ThisBuild / licenses := Seq(License.MIT)
+ThisBuild / developers := List(
+  Developer(
+    id = "dwickern",
+    name = "Derek Wickern",
+    email = "dwickern@gmail.com",
+    url = url("https://github.com/dwickern")
+  )
 )
