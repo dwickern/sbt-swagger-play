@@ -32,11 +32,11 @@ object SwaggerPlayTestPlugin extends AutoPlugin {
     },
   )
 
-  def toJson(path: String): JsValue = {
+  private def toJson(path: String): JsValue = {
     Json.parse(IO.readBytes(file(path)))
   }
 
-  def httpRequest(requestUrl: URL): Unit = {
+  private def httpRequest(requestUrl: URL): Unit = {
     @tailrec def read(attempts: Int): String = {
       try {
         val conn = requestUrl.openConnection().asInstanceOf[java.net.HttpURLConnection]
